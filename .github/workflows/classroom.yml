@@ -1,0 +1,48 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: 'Setup'
+      id: setup
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Setup
+        command: "bash .github/test/setup.sh"
+        timeout: 30
+    - name: Recover Balance
+      id: recover-balance
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: Recover Balance
+        command: "bash ./.github/test/test_balance.sh"
+        expected-output: 'PASS'
+        comparison-method: contains
+        timeout: 30
+        max-score: 1
+    - name: Send Multisig
+      id: send-multisig
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Send Multisig
+        command: "bash ./.github/test/test_spend.sh"
+        timeout: 10
+        max-score: 1
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        SETUP_RESULTS: "${{steps.setup.outputs.result}}"
+        RECOVER-BALANCE_RESULTS: "${{steps.recover-balance.outputs.result}}"
+        SEND-MULTISIG_RESULTS: "${{steps.send-multisig.outputs.result}}"
+      with:
+        runners: setup,recover-balance,send-multisig

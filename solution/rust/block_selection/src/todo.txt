@@ -1,0 +1,12 @@
+check for cycles in transaction processing
+
+select transactions what that achieves the required weight while maximizing the fee to weight ratio
+
+
+results of computation
+
+Method                    |    Total Fee | Total Weight | # Transactions | Dependencies OK |   Time (s)
+-----------------------------------------------------------------------------------------------
+Greedy Solution           |      5704530 |      3999904 |           3178 |      true       |     0.0079
+Fractional Knapsack       |      4983743 |      3999696 |           2737 |      true       |     0.0133
+Combined Approach         |      4769114 |      3229332 |           2484 |      true       |     0.0053
